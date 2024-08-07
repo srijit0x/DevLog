@@ -1,16 +1,16 @@
 const express = require('express');
-const logController = require('./logController');
+const logEntryController = require('./logEntryController');
 
 const router = express.Router();
 
-router.post('/logs', logController.createLogEntry);
+router.post('/logs', logEntryController.createEntry);
 
-router.get('/logs', logController.getAllLogEntries);
+router.get('/logs', logEntryController.fetchAllEntries);
 
-router.get('/logs/:id', logController.getLogEntryById);
+router.get('/logs/:id', logEntryController.fetchEntryById);
 
-router.put('/logs/:id', logController.updateLogEntry);
+router.put('/logs/:id', logEntryController.updateEntry);
 
-router.delete('/logs/:id', logController.deleteLogEntry);
+router.delete('/logs/:id', logEntryController.removeEntry);
 
 module.exports = router;

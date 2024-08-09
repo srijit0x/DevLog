@@ -3,14 +3,14 @@ const logEntryController = require('./logEntryController');
 
 const router = express.Router();
 
-router.post('/logs', logEntryController.createEntry);
+router.post('/logs', logEntryController.createLogEntry);
 
-router.get('/logs', logEntryController.fetchAllEntries);
+router.get('/logs', logEntryController.retrieveAllLogEntries);
 
-router.get('/logs/:id', logEntryController.fetchEntryById);
+router.get('/logs/:id', logEntryController.retrieveLogEntryById);
 
-router.put('/logs/:id', logEntryController.updateEntry);
+router.put('/logs/:id', logEntryController.updateLogEntryById);
 
-router.delete('/logs/:id', logEntryController.removeEntry);
+router.delete('/logs/:id', logEntryController.deleteLogEntryById);
 
 module.exports = router;

@@ -1,16 +1,31 @@
-const express = require('express');
-const logEntryController = require('./logEntryController');
+const LogEntry = require('./LogEntryModel'); 
 
-const router = express.Router();
+exports.createLogEntry = async (req, res) => {
+    try {
+        const data = extractLogEntryData(req);
+        const logEntry = await saveLogEntry(data);
+        sendResponse(res, 201, logEntry);
+    } catch (error) {
+        handleError(res, error);
+    }
+};
 
-router.post('/logs', logEntryController.createLogEntry);
+function extractLogEntryData(req) {
+    const { title, description, date } = req.body;
+    return { title, description, date };
+}
 
-router.get('/logs', logEntryController.retrieveAllLogEntries);
+async function saveLogEntry(data) {
+    const logEntry = new LogEntry(data);
+    await logEntry.save();
+    return logEntry;
+}
 
-router.get('/logs/:id', logEntryController.retrieveLogEntryById);
+function sendResponse(res, statusCode, data) {
+    res.status(statusCode).json(data);
+}
 
-router.put('/logs/:id', logEntryController.updateLogEntryById);
-
-router.delete('/logs/:id', logEntryController.deleteLogEntryById);
-
-module.exports = router;
+function handleError(res, error) {
+    console.error(error);
+    res.status(500).json({ message: 'An error occurred', error: error.message });
+}

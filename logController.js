@@ -37,7 +37,10 @@ const getLogEntryById = async (req, res) => {
 
 const updateLogEntry = async (req, res) => {
   try {
-    const logEntry = await LogEntry.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const logEntry = await LogEntry.findByIdAndUpdate(req.params.id, req.body, {
+      new: true, 
+      runValidators: true 
+    });
     if (!logEntry) return res.status(404).send();
     res.status(200).send(logEntry);
   } catch (error) {

@@ -18,7 +18,8 @@ const createLogEntry = async (req, res) => {
 
 const getAllLogEntries = async (req, res) => {
   try {
-    const logEntries = await LogEntry.find({});
+    const filter = req.query.tag ? { tags: req.query.tag } : {};
+    const logEntries = await LogEntry.find(filter);
     res.status(200).send(logEntries);
   } catch (error) {
     res.status(500).send(error.message);
@@ -65,3 +66,18 @@ module.exports = {
   updateLogEntry,
   deleteLogEntry
 };
+```
+```javascript
+const mongoose = require('mongoose');
+
+const logEntrySchema = new mongoose.Schema({
+  title: String,
+  description: String,
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  tags: [String],
+});
+
+module.exports = mongoose.model('LogEntry', logEntrySchema);

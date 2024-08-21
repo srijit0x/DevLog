@@ -1,59 +1,18 @@
-const mongoose = require('mongoose');
-const LogEntry = require('./LogModel');
-
-mongoose.connect(process.env.MONGODB_URI, { 
-  useNewUrlParser: true, 
-  useUnifiedTopology: true 
-});
-
-const createLogEntry = async (req, res) => {
+const createMultipleLogEntries = async (req, res) => {
   try {
-    const logEntry = new LogEntry(req.body);
-    const result = await logEntry.save();
-    res.status(201).send(result);
+    const logEntries = await LogEntry.insertMany(req.body);
+    res.status(201).send(logEntries);
   } catch (error) {
     res.status(400).send(error.message);
   }
 };
 
-const getAllLogEntries = async (req, res) => {
+const deleteMultipleLogEntries = async (req, res) => {
   try {
-    const filter = req.query.tag ? { tags: req.query.tag } : {};
-    const logEntries = await LogEntry.find(filter);
-    res.status(200).send(logEntries);
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
-};
-
-const getLogEntryById = async (req, res) => {
-  try {
-    const logEntry = await LogEntry.findById(req.params.id);
-    if (!logEntry) return res.status(404).send();
-    res.status(200).send(logEntry);
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
-};
-
-const updateLogEntry = async (req, res) => {
-  try {
-    const logEntry = await LogEntry.findByIdAndUpdate(req.params.id, req.body, {
-      new: true, 
-      runValidators: true 
+    const results = await LogEntry.deleteMany({
+      _id: { $in: req.body.ids },
     });
-    if (!logEntry) return res.status(404).send();
-    res.status(200).send(logEntry);
-  } catch (error) {
-    res.status(400).send(error.message);
-  }
-};
-
-const deleteLogEntry = async (req, res) => {
-  try {
-    const logEntry = await LogEntry.findByIdAndDelete(req.params.id);
-    if (!logEntry) return res.status(404).send();
-    res.status(200).send(logEntry);
+    res.status(200).send(results);
   } catch (error) {
     res.status(500).send(error.message);
   }
@@ -64,20 +23,7 @@ module.exports = {
   getAllLogEntries,
   getLogEntryById,
   updateLogEntry,
-  deleteLogEntry
+  deleteLogEntry,
+  createMultipleLogEntries,
+  deleteMultipleLogEntries,
 };
-```
-```javascript
-const mongoose = require('mongoose');
-
-const logEntrySchema = new mongoose.Schema({
-  title: String,
-  description: String,
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-  tags: [String],
-});
-
-module.exports = mongoose.model('LogEntry', logEntrySchema);

@@ -1,25 +1,22 @@
 const mongoose = require('mongoose');
 
+const databaseConnectionString = process.env.MONGODB_URI || 'your_default_connection_string';
 
-const mongoDBUri = process.env.MONGODB_URI || 'your_default_connection_string';
+mongoose.connect(databaseConnectionString, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('MongoDB Connection Successful'))
+  .catch(err => console.error('Error Connecting to MongoDB:', err));
 
-
-mongoose.connect(mongoDBUri, { useNewUrlParser: true, useUnifiedTopology: true })
-.then(() => console.log('MongoDB Connected'))
-.catch(err => console.error('MongoDB connection error:', err));
-
-
-const logSchema = new mongoose.Schema({
+const developmentLogSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true
   },
   description: String,
-  project: {
+  projectName: {
     type: String,
     required: true
   },
-  date: {
+  entryDate: {
     type: Date,
     default: Date.now
   },
@@ -30,8 +27,6 @@ const logSchema = new mongoose.Schema({
   }
 });
 
+const DevelopmentLogEntry = mongoose.model('DevelopmentLogEntry', developmentLogSchema);
 
-const Log = mongoose.model('Log', logSchema);
-
-
-module.exports = Log;
+module.exports = DevelopmentLogEntry;

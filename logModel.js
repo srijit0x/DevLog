@@ -1,15 +1,15 @@
 const mongoose = require('mongoose');
 
-const databaseConnectionString = process.env.MONGODB_URI || 'your_default_connection_string';
+const databaseUri = process.env.MONGODB_URI || 'your_default_connection_string';
 
-mongoose.connect(databaseConnectionString, {
+mongoose.connect(databaseUri, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
     .then(() => console.log('MongoDB Connection Successful'))
-    .catch(err => console.error('Error Connecting to MongoDB:', err));
+    .catch(err => console.error('MongoDB Connection Error:', err));
 
-const developmentLogSchema = new mongoose.Schema({
+const devLogSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true
@@ -30,40 +30,32 @@ const developmentLogSchema = new mongoose.Schema({
     }
 });
 
-const DevelopmentLogEntry = mongoose.model('DevelopmentLogEntry', developmentLogSchema);
+const DevLogEntryModel = mongoose.model('DevLogEntry', devLogSchema);
 
-// Supplementary function to find entries by status
-/**
- * Finds development log entries by their status.
- * @param {string} status - The status of the development logs to find ('Open', 'In Progress', 'Closed').
- * @returns {Promise<Array>} A promise that resolves to an array of development log entries.
- */
-const findEntriesByStatus = async (status) => {
+const searchLogsByStatus = async (entryStatus) => {
   try {
-    const entries = await DevelopmentLogEntry.find({ status: status }).exec();
-    return entries;
+    const matchingEntries = await DevLogEntryModel.find({ status: entryStatus }).exec();
+    return matchingEntries;
   } catch (err) {
-    console.error('Error retrieving entries by status:', err);
-    throw err; // rethrow the error for further handling if desired
+    console.error('Failed to search entries by status:', err);
+    throw err; 
   }
 };
 
-// Expose both the model and the new utility function
 module.exports = {
-    DevelopmentLogEntry,
-    findEntriesByStatus,
+    DevLogEntryModel,
+    searchLogsByStatus,
 };
 
-const { findEntriesByStatus } = require('./path-to-your-file');
+const { searchLogsByStatus } = require('./path-to-your-file');
 
-async function displayEntries() {
+async function displayLogsByStatus() {
   try {
-    const openEntries = await findEntriesByStatus('Open');
-    console.log('Open Entries:', openEntries);
-    // Similarly, you could fetch 'In Progress' or 'Closed' entries
+    const openLogs = await searchLogsByStatus('Open');
+    console.log('Open Development Logs:', openLogs);
   } catch (err) {
-    console.error('Failed to fetch entries:', err);
+    console.error('Error displaying logs by status:', err);
   }
 }
 
-displayEntries();
+displayLogsByStatus();

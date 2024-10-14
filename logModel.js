@@ -1,13 +1,11 @@
 const mongoose = require('mongoose');
-
 const databaseUri = process.env.MONGODB_URI || 'your_default_connection_string';
-
 mongoose.connect(databaseUri, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
-    .then(() => console.log('MongoDB Connection Successful'))
-    .catch(err => console.error('MongoDB Connection Error:', err));
+.then(() => console.log('MongoDB Connection Successful'))
+.catch(err => console.error('MongoDB Connection Error:', err));
 
 const devLogSchema = new mongoose.Schema({
     title: {
@@ -37,7 +35,7 @@ const searchLogsByStatus = async (entryStatus) => {
     const matchingEntries = await DevLogEntryModel.find({ status: entryStatus }).exec();
     return matchingEntries;
   } catch (err) {
-    console.error('Failed to search entries by status:', err);
+    console.error(`Failed to search entries by status - ${entryStatus}:`, err);
     throw err; 
   }
 };
@@ -53,8 +51,11 @@ async function displayLogsByStatus() {
   try {
     const openLogs = await searchLogsByStatus('Open');
     console.log('Open Development Logs:', openLogs);
+    const closedLogs = await searchLogsByStatus('Closed');
+    console.log('Closed Development Logs:', closedLogs);
+
   } catch (err) {
-    console.error('Error displaying logs by status:', err);
+    console.error('Error occurred while displaying logs by status:', err);
   }
 }
 

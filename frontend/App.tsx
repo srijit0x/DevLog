@@ -1,10 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Header from './components/Header';
-import LogViewer from './components/LogViewer';
-import AddLog from './components/AddLog';
+import LogDisplay from './components/LogViewer';  
+import CreateLogEntry from './components/AddLog'; 
 
-const backendURL = process.env.REACT_APP_BACKEND_URL;
+const apiBaseUrl = process.env.REACT_APP_BACKEND_URL; 
 
 const App: React.FC = () => {
   return (
@@ -13,13 +13,13 @@ const App: React.FC = () => {
         <Header />
         <Switch>
           <Route exact path="/logs">
-            <LogViewer backendURL={backendURL}/>
+            <LogDisplay apiBaseUrl={apiBaseUrl}/>
           </Route>
           <Route path="/add-log">
-            <AddLog backendURL={backendURL}/>
+            <CreateLogEntry apiBaseUrl={apiBaseUrl}/>
           </Route>
           <Route path="/">
-            <LogViewer backendURL={backendURL}/>
+            <LogDisplay apiBaseUrl={apiBaseUrl}/>
           </Route>
         </Switch>
       </div>
